@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BinarySer" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BwAAAAAAAAAAAABQAEABAAAAAAgAAAIAAAAAAAAAIAA=</HashCode>
+      <FileName>BinarySer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BinaryMapSer" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAABAAAAAAABAAAAAAAACAQAAAAAAAAAAAACAIAAAA=</HashCode>
+      <FileName>BinarySer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BinarySeqSer" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAJAAAAAAAAAAQAAAAAAAAAAIAGAIAAAA=</HashCode>
+      <FileName>BinarySer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BinaryStructSer" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAABAAAAAAAACAQAAAAAAAAAIAACAAAAAA=</HashCode>
+      <FileName>BinarySer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractDeVisitor&lt;T&gt;" Collapsed="true">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAQAAAAAAAAACAAAACQABAAAAAAACA=</HashCode>
+      <FileName>Deserializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractSeqDe" Collapsed="true">
+    <Position X="10.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Deserializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractMapDe&lt;MapValue&gt;" Collapsed="true">
+    <Position X="3.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Deserializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractDeAccess" Collapsed="true">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAABAAAAAAAAAAAAACAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Deserializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractDeserializer" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Deserializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSONMapDe" Collapsed="true">
+    <Position X="3.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>JSONDe.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSONDe" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>JSONDe.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSONSer" Collapsed="true">
+    <Position X="7.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BwAAAAAQAAAAAABAAEABAAAAAAgAAAIAAAAAAAAAIAA=</HashCode>
+      <FileName>JSONSer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSONMapSer" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAABCAgAAAAACAAAAAAAAAAAAAACAAIAIA=</HashCode>
+      <FileName>JSONSer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSONSeqSer" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAEBAAAAAAAAAAQAAAAAAAAAAIACAAIAQA=</HashCode>
+      <FileName>JSONSer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSONStructSer" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAABAAQAAAAACAQAAAAgAAAAAAACAAIAAA=</HashCode>
+      <FileName>JSONSer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Node&lt;T&gt;" Collapsed="true">
+    <Position X="12" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAACAAAAAgAAAAAAAAAAAAAAgAAAAAAEAAAA=</HashCode>
+      <FileName>Node.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractSerializer&lt;MapSer, SeqSer, StructSer&gt;" Collapsed="true">
+    <Position X="6.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BgCAAAAAAAAAAABAAEABAAAAAAgAAAIAAAAAAAAAIAA=</HashCode>
+      <FileName>Serializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractMapSer&lt;S&gt;" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAQQAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Serializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractSeqSer&lt;S&gt;" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAQAAAAAAAAAAIACAAAAAA=</HashCode>
+      <FileName>Serializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AbstractStructSer&lt;S&gt;" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAAgAACAAAAAA=</HashCode>
+      <FileName>Serializer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Person" Collapsed="true">
+    <Position X="12" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAMAAAAAAAAAgAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Example.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ExceededSize" Collapsed="true">
+    <Position X="10.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Serializer.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
