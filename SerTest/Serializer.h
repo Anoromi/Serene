@@ -12,16 +12,16 @@ class AbstractSerializer {
 protected:
 	~AbstractSerializer() {}
 protected:
-	virtual MapSer sMap(size_t);
-	virtual SeqSer sSeq(size_t);
-	virtual StructSer sStruct();
+	MapSer sMap(size_t);
+	SeqSer sSeq(size_t);
+	StructSer sStruct();
 
-	virtual void sLong(long long);
-	virtual void sULong(unsigned long long);
+	void sLong(long long);
+	void sULong(unsigned long long);
 	//void sWString(std::wstring);
-	virtual void sString(std::string);
-	virtual void sBool(bool);
-	virtual void sChar(char);
+	void sString(std::string);
+	void sBool(bool);
+	void sChar(char);
 
 
 	using SMap = MapSer;
