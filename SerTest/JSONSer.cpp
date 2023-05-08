@@ -1,72 +1,103 @@
 #include "JSONSer.h"
 
-void JSONSer::sBool(bool v)
-{
-	_out << std::boolalpha << v;
-}
 
-void JSONSer::sChar(char v)
-{
-	_out << "\"" << v << "\"";
-}
-
-void JSONMapSer::start()
+void JSONMapSer::_begin()
 {
 	_out << '{';
 }
 
-void JSONMapSer::finish()
+void JSONMapSer::_finish()
 {
 
 	_out << '}';
 }
 
-JSONMapSer JSONSer::sMap(size_t)
+std::unique_ptr<AbstractMapSer> JSONSer::_sMap(size_t)
 {
-	return JSONMapSer(_out, *this);
+	return  std::unique_ptr<AbstractMapSer>(new JSONMapSer(_out, *this));
 }
 
-JSONSeqSer JSONSer::sSeq(size_t)
+std::unique_ptr<AbstractSeqSer> JSONSer::_sSeq(size_t)
 {
-	return JSONSeqSer(_out, *this);
+	return std::unique_ptr<AbstractSeqSer>(new JSONSeqSer(_out, *this));
 }
 
-JSONStructSer JSONSer::sStruct()
+std::unique_ptr<AbstractStructSer> JSONSer::_sStruct()
 {
-	return JSONStructSer(_out, *this);
+	return std::unique_ptr<AbstractStructSer>(new JSONStructSer(_out, *this));
 }
 
-void JSONSer::sLong(long long v)
-{
-	_out << v;
-}
-
-void JSONSer::sULong(unsigned long long v)
+void JSONSer::_sLong(long long v)
 {
 	_out << v;
 }
 
-void JSONSer::sString(const std::string& v)
+
+void JSONSer::_sULong(unsigned long long v)
+{
+	_out << v;
+}
+
+void JSONSer::_sString(const std::string& v)
 {
 	_out << "\"" << v << "\"";
 }
 
-void JSONSeqSer::begin()
+void JSONSer::_sBool(bool v)
+{
+	_out << v;
+}
+
+void JSONSer::_sChar(char v)
+{
+	_out << "\"" << v << "\"";
+}
+
+void JSONSeqSer::_begin()
 {
 	_out << '[';
 }
 
-void JSONSeqSer::finish()
+void JSONSeqSer::_finish()
 {
 	_out << ']';
 }
 
-void JSONStructSer::begin()
+void JSONStructSer::_begin()
 {
 	_out << '{';
 }
 
-void JSONStructSer::finish()
+void JSONStructSer::_finish()
 {
 	_out << '}';
+}
+
+
+void JSONMapSer::_sKeyVal(const std::string& k, const Writer& v)
+{
+	if (addComma)
+		_out << ',';
+	_ser.sString(k);
+	_out << ':';
+	v(_ser);
+	addComma = true;
+}
+
+void JSONStructSer::_sKeyVal(const std::string& k, const Writer& v)
+{
+	if (addComma)
+		_out << ',';
+	_ser.sString(k);
+	_out << ':';
+	v(_ser);
+	addComma = true;
+}
+
+void JSONSeqSer::_sNext(const Writer& v)
+{
+	if (addComma)
+		_out << ',';
+	v(_ser);
+	addComma = true;
 }

@@ -2,33 +2,65 @@
 #include <string>
 #include <vector>
 #include "BinarySer.h"
-#include "JSONSer.h"
+#include "Deserializer.h"
 #include "Example.h"
+#include <boost/json.hpp>
+#include "JSONSer.h"
+#include "JSONDe.h"
+#include "BinaryDe.h"
 
-
-
-void serTest() {
-
+template<typename T>
+inline void serTest(std::string path, const T& value) {
 	{
-		std::ofstream outBinary("./outBinary.txt");
+		std::ofstream outBinary(path + ".txt");
 		outBinary.clear();
 		BinarySer s(outBinary);
-		Person p = { "Andrii Zahorulko", 19, 'm', std::vector < std::string> {"c#", "rust", "dart"} };
-		write(s, p);
+		write(value)(s);
 		outBinary.close();
 	}
 
 	{
-		std::ofstream outJSON("./outJSON.txt");
+		std::ofstream outJSON(path + ".json");
 		outJSON.clear();
 		JSONSer s(outJSON);
-		Person p = { "Andrii Zahorulko", 19, 'm', std::vector < std::string> {"c#", "rust", "dart"} };
-		write(s, p);
-		//write(s, p);
+		write(value)(s);
 		outJSON.close();
 	}
 
+
 	{
-		
+		std::ifstream inBinary(path + ".txt");
+		BinaryDe de(inBinary);
+		DeserialzationScope scope;
+		DeserializeBuffer<T> value;
+		deserialize(value.buffer())(de, scope);
+
+		auto result = value.operator*();
+		std::cout << result << std::endl;
 	}
+
+	{
+		std::ifstream inJson(path + ".json");
+		boost::json::value v(boost::json::parse(inJson));
+
+		JSONDe de(v);
+		DeserialzationScope scope;
+		DeserializeBuffer<T> value;
+		deserialize(value.buffer())(de, scope);
+
+		auto result = value.operator*();
+		std::cout << result << std::endl;
+	}
+
+}
+
+
+void serTest1() {
+
+	Person p("Andrii Zahorulko", 19, Sex::male);
+	serTest("./out1", p);
+
+	Student s("Andrii Zahorulko", 19, Sex::male, { "dart", "c#", "rust" });
+	serTest("./out2", s);
+
 }

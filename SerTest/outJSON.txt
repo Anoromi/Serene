@@ -1,11 +1,1 @@
-{
-  "name": "Andrii Zahorulko",
-  "age": 19,
-  "gender": "m",
-  "languages": [
-    "c#",
-    "rust",
-    "dart",
-    "c++"
-  ]
-}
+{"type":"Person","value":{"name":"Andrii Zahorulko","age":19,"sex":"male"}}

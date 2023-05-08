@@ -21,11 +21,11 @@ inline Node<T>& Node<T>::connect(const T& nextValue)
 	return *_next;
 }
 
-template<typename T>
-template<Serializer S>
-inline void Node<T>::save(S& ser)
-{
-	auto seqSer = ser.sSeq();
-	auto* current = this;
-	
-}
+//template<typename T>
+//template<Serializer S>
+//inline void Node<T>::save(S& ser)
+//{
+//	auto seqSer = ser.sSeq();
+//	auto* current = this;
+//	
+//}

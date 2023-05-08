@@ -5,154 +5,219 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <functional>
 
+class AbstractSerializer;
+class AbstractMapSer;
+class AbstractSeqSer;
+class AbstractStructSer;
 
-template<typename MapSer, typename SeqSer, typename StructSer>
+using Writer = std::function<void(AbstractSerializer&)>;
+
 class AbstractSerializer {
 protected:
-	~AbstractSerializer() {}
-protected:
-	MapSer sMap(size_t);
-	SeqSer sSeq(size_t);
-	StructSer sStruct();
+	virtual ~AbstractSerializer() {}
+private:
+	virtual std::unique_ptr<AbstractMapSer> _sMap(size_t) = 0;
+	virtual std::unique_ptr<AbstractSeqSer> _sSeq(size_t) = 0;
+	virtual std::unique_ptr<AbstractStructSer> _sStruct() = 0;
 
-	void sLong(long long);
-	void sULong(unsigned long long);
-	//void sWString(std::wstring);
-	void sString(std::string);
-	void sBool(bool);
-	void sChar(char);
+	virtual void _sLong(long long) = 0;
+	virtual void _sULong(unsigned long long) = 0;
+	virtual void _sString(const std::string&) = 0;
+	virtual void _sBool(bool) = 0;
+	virtual void _sChar(char) = 0;
+public:
+
+	inline std::unique_ptr<AbstractMapSer> sMap(size_t s) { return _sMap(s); }
+	inline std::unique_ptr<AbstractSeqSer> sSeq(size_t s) { return _sSeq(s); };
+	inline std::unique_ptr<AbstractStructSer> sStruct() { return _sStruct(); };
+
+	inline void sLong(long long v) { return _sLong(v); };
+	inline void sULong(unsigned long long v) { return _sULong(v); };
+	inline void sString(std::string v) { return _sString(v); };
+	inline void sBool(bool v) { return _sBool(v); };
+	inline void sChar(char v) { return _sChar(v); };
+
+};
 
 
-	using SMap = MapSer;
-	using SSeq = SeqSer;
-	using SStruct = StructSer;
+
+template<typename T>
+concept Serializable = requires(T t) {
+	{write(t)};
+};
+
+class AbstractMapSer {
+private:
+	virtual void _sKeyVal(const std::string&, const Writer&) = 0;
+	virtual void _begin() = 0;
+	virtual void _finish() = 0;
+
+public:
+	virtual ~AbstractMapSer() {}
+	inline void sKeyVal(const std::string& k, const Writer& v) { return _sKeyVal(k, v); };
+	void begin() { return _begin(); };
+	void finish() { return _finish(); };
+
+};
+
+
+class AbstractSeqSer {
+private:
+
+	virtual void _sNext(const Writer& v) = 0;
+	virtual void _begin() = 0;
+	virtual void _finish() = 0;
+public:
+	virtual ~AbstractSeqSer() {}
+
+	inline void sNext(const Writer& v) { return _sNext(v); }
+	inline void begin() { return _begin(); };
+	inline void finish() { return _finish(); };
+};
+
+class AbstractStructSer {
+private:
+	virtual void _sKeyVal(const std::string&, const Writer&) = 0;
+	virtual void _begin() = 0;
+	virtual void _finish() = 0;
+
+public:
+	virtual ~AbstractStructSer() {}
+
+	inline void sKeyVal(const std::string& k, const Writer& v) { return _sKeyVal(k, v); };
+	inline void begin() { return _begin(); };
+	inline void finish() { return _finish(); };
+};
+
+
+inline Writer write(std::same_as<long long> auto v) {
+	return [v](AbstractSerializer& s) {s.sLong(v); };
+}
+
+inline Writer write(std::same_as<unsigned long long> auto v) {
+	return [v](AbstractSerializer& s) {s.sULong(v); };
+}
+
+inline Writer write(std::same_as<int> auto v) {
+	return write((long long)v);
+}
+
+inline Writer write(std::same_as<unsigned int> auto v) {
+	return write((unsigned long long) v);
+}
+
+
+
+inline Writer write(const std::same_as<std::string> auto& v) {
+	return [&v](AbstractSerializer& s) {s.sString(v); };
+}
+
+inline Writer write(const std::same_as<const char* const> auto& v) {
+	return [&v](AbstractSerializer& s) {s.sString(v); };
+}
+
+
+inline Writer write(std::same_as<bool> auto v) {
+
+	return [v](AbstractSerializer& s) {s.sBool(v); };
+}
+
+inline Writer write(std::same_as<char> auto v) {
+	return [v](AbstractSerializer& s) {s.sChar(v); };
+}
+
+template<typename T>
+concept HasClassName = requires(T t) {
+	{T::typeName} -> std::convertible_to<const char(&)[]>;
+};
+
+template<HasClassName T>
+inline Writer write(const T* v) {
+	return [v](AbstractSerializer& s) {
+		auto structSer = s.sStruct();
+		structSer->begin();
+		structSer->sKeyVal("type", write<std::string>(T::typeName));
+		structSer->sKeyVal("value", write<T>(*v));
+		structSer->finish();
+	};
+}
+
+
+
+class SerializableObject {
+private:
+	virtual Writer _serialize() const = 0;
+public:
+	inline Writer serialize() const { return _serialize(); }
 };
 
 template<typename T>
-concept Serializer = requires(T t) {
-	T::SMap;
-	T::SSeq;
-	T::SStruct;
-	std::derived_from < T, AbstractSerializer<typename T::SMap, typename T::SSeq, typename T::SStruct>>;
-};
-
-
-template<typename S, typename T>
-concept Serializable = requires(S s, T t) {
-	Serializer<S>;
-	{write(s, t)};
-};
-
-template<typename S>
-class AbstractMapSer {
-protected:
-	~AbstractMapSer() {}
-protected:
-
-	template<typename T>
-		requires Serializable<S, T>
-	void sKeyVal(const std::string&, T);
-	
-
-	template<typename T>
-		requires Serializable<S, T>
-	void sKeyVal(unsigned long long, T);
-
-	void begin();
-	void finish();
-};
-
-
-template<typename S>
-class AbstractSeqSer {
-protected:
-	~AbstractSeqSer() {}
-protected:
-	template<typename T>
-		requires Serializable<S, T>
-	void sNext(T);
-
-	void begin();
-	void finish();
-};
-
-template<typename S>
-class AbstractStructSer {
-protected:
-	~AbstractStructSer() {}
-protected:
-	template<typename T>
-		requires Serializable<S, T>
-	void sKeyVal(const std::string&, T);
-
-	template<typename T>
-		requires Serializable<S, T>
-	void sKeyVal(unsigned long long, T);
-
-	void begin();
-	void finish();
-
-};
-
-
-template<typename S, typename T>
-	requires Serializer<S>&& std::same_as<T, long long>
-void write(S& s, T v) {
-	s.sLong(v);
-}
-
-template<typename S, typename T>
-	requires Serializer<S>&& std::same_as<T, unsigned long long>
-void write(S& s, T v) {
-	s.sULong(v);
-}
-
-
-template<typename S, typename T>
-	requires Serializer<S>&& std::same_as<T, std::string>
-void write(S& s, const T& v) {
-	s.sString(v);
-}
-
-template<typename S, typename T>
-	requires Serializer<S>&& std::same_as<T, bool>
-void write(S& s, T v) {
-	s.sBool(v);
-}
-
-template<typename S, typename T>
-	requires Serializer<S>&& std::same_as<T, char>
-void write(S& s, T v) {
-	s.sChar(v);
-}
-
-template<typename S, typename T>
-concept SerializableIterator = requires(S s, T t) {
+concept SerializableIterator = requires(T t) {
 	T::reference;
-	Serializable<S, typename T::reference>;
+
+	Serializable<typename T::reference>;
 	{ ++t } -> std::same_as<T>;
 	{ *t } -> std::same_as<typename T::reference>;
 };
 
-template<typename S, typename T>
-concept SerializableIterable = requires(S s, T t) {
-	SerializableIterator<S, decltype(t.begin())>;
-	SerializableIterator<S, decltype(t.end())>;
+template<typename T>
+concept SerializableSeq = requires(T t) {
+	SerializableIterator<decltype(t.begin())>;
+	SerializableIterator<decltype(t.end())>;
 	{t.size()} -> std::same_as<size_t>;
 };
 
+template<typename T>
+concept SerializableMap = requires(T t) {
+	SerializableIterator<decltype(t.begin())>;
+	SerializableIterator<decltype(t.end())>;
+	{t.size()} -> std::same_as<size_t>;
+	typename T::key_type;
+	typename T::value_type;
+	{*t.begin()} -> std::same_as < std::pair<typename T::key_type, typename T::value_type>>;
 
+};
 
-template<typename S, typename T>
-	requires Serializer<S> && (!same_as<T, std::string>) && SerializableIterable<S, T>
-void write(S& s, const T& v) {
-
-	auto seqSer = s.sSeq(v.size());
-	seqSer.begin();
-	for (auto iter = v.begin(); iter != v.end(); ++iter)
-		seqSer.sNext(*iter);
-	seqSer.finish();
+template<typename T>
+	requires  (!std::same_as<T, std::string>) && SerializableSeq<T> && (!std::derived_from<T, SerializableObject>)
+inline Writer write(const T& v) {
+	return [&v](AbstractSerializer& s) {
+		auto seqSer = s.sSeq(v.size());
+		seqSer->begin();
+		for (auto iter = v.begin(); iter != v.end(); ++iter) {
+			auto& current = *iter;
+			seqSer->sNext(write(current));
+		}
+		seqSer->finish();
+	};
 }
 
+template<typename T>
+	requires  (!std::same_as<T, std::string>) && SerializableMap<T> && (!std::derived_from<T, SerializableObject>)
+inline Writer write(const T& v) {
+	return [&v](AbstractSerializer& s) {
+		auto seqSer = s.sSeq(v.size());
+		seqSer->begin();
+		for (auto iter = v.begin(); iter != v.end(); ++iter) {
+			auto& current = *iter;
+			seqSer->sNext(write(current));
+		}
+		seqSer->finish();
+	};
+}
+
+template<typename T>
+	requires std::derived_from<T, SerializableObject>
+inline Writer write(const T& v) {
+	return v.serialize();
+}
+
+
+
+
+
 struct ExceededSize {};
+
+

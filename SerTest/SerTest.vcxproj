@@ -128,22 +128,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BinaryDe.cpp" />
     <ClCompile Include="BinarySer.cpp" />
+    <ClCompile Include="Deserializer.cpp" />
+    <ClCompile Include="Example.cpp" />
+    <ClCompile Include="JSONDe.cpp" />
     <ClCompile Include="JSONSer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="StaticTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryDe.h" />
     <ClInclude Include="BinarySer.h" />
+    <ClInclude Include="BufferAlloc.h" />
+    <ClInclude Include="DeserializeExt.h" />
     <ClInclude Include="Deserializer.h" />
     <ClInclude Include="Example.h" />
     <ClInclude Include="JSONDe.h" />
     <ClInclude Include="JSONSer.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Serializer.h" />
+    <ClInclude Include="StaticInit.h" />
+    <ClInclude Include="StaticTest.h" />
     <ClInclude Include="Test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
