@@ -69,12 +69,6 @@ void Student::show(std::ostream& o)
 
 Writer Color::serilaizeCurrent() const
 {
-	//return [this](AbstractSerializer& se) {
-	//	se.sULong((unsigned long long) _red << 16
-	//		| (unsigned long long) _green << 8
-	//		| (unsigned long long) _blue);
-	//};
-
 	return [this](AbstractSerializer& se) {
 		auto structSer = se.sStruct();
 		structSer->begin();

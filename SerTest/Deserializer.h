@@ -6,6 +6,7 @@
 #include <iterator>
 #include <map>
 #include <functional>
+#include <optional>
 #include "Serializer.h"
 #include "BufferAlloc.h"
 #include "StaticInit.h"
@@ -111,7 +112,7 @@ concept Deserializable = requires(T t, BufferAlloc & buffer) {
 	{T::read(buffer)};
 };
 
-using PointerDeserialize = Deserialize(*)(HeapAlloc&);
+using PointerDeserialize = Deserialize(*)(HeapAllocBuffer& heap);
 
 class DeserializationDescription {
 private:
@@ -198,6 +199,8 @@ Deserialize read(BufferAlloc& v) {
 	};
 }
 
+
+
 template<typename T>
 	requires Deserializable<T>
 Deserialize read(BufferAlloc& v) {
@@ -205,7 +208,7 @@ Deserialize read(BufferAlloc& v) {
 }
 
 template<typename T>
-Deserialize deserialize(StackAlloc<T>& v) {
+Deserialize deserialize(StackAllocBuffer<T>& v) {
 	return [&v](AbstractDeserializer& de, DeserialzationScope& scope) {
 		read<T>(v)(de, scope);
 		v.setWasInitialized(true);
@@ -213,7 +216,7 @@ Deserialize deserialize(StackAlloc<T>& v) {
 }
 
 template<typename T>
-Deserialize deserialize(HeapAlloc& v) {
+Deserialize deserialize(HeapAllocBuffer& v) {
 	return [&v](AbstractDeserializer& de, DeserialzationScope& scope) {
 		read<T>(v)(de, scope);
 	};
@@ -224,21 +227,21 @@ template<typename T>
 Deserialize deserialize(T*& v) {
 	return [&v](AbstractDeserializer& de, DeserialzationScope& scope) {
 
-		StackAlloc<std::string> type;
+		StackAllocBuffer<std::string> type;
 		auto str = de.dStruct();
 		str->next(scope, "type", deserialize(type));
 
 		std::cout << *type;
 
 		const DeserializationDescription& description = TypeAccumulator::getInstance().find(*type);
-		HeapAlloc obj(description.getObjectSize());
+		HeapAllocBuffer obj(description.getObjectSize());
 		str->next(scope, "value", description.getDeserializer()(obj));
 		v = reinterpret_cast<T*>(obj.getBuffer());
 	};
 }
 
 template<typename T>
-concept HasRead = requires(T t, HeapAlloc & buffer) {
+concept HasRead = requires(T t, HeapAllocBuffer & buffer) {
 	{read<T>(buffer) };
 };
 
@@ -246,14 +249,14 @@ template<HasRead T>
 	requires (!std::derived_from<T, SerializableObject>)
 Deserialize deserialize(T*& v) {
 	return [&v](AbstractDeserializer& de, DeserialzationScope& scope) {
-		HeapAlloc obj(sizeof(T));
+		HeapAllocBuffer obj(sizeof(T));
 		read<T>(obj);
 		v = reinterpret_cast<T*>(obj.getBuffer());
 	};
 }
 
 template<typename T>
-Deserialize heapDeserialize(HeapAlloc& buffer) {
+Deserialize heapDeserialize(HeapAllocBuffer& buffer) {
 	return read<T>(buffer);
 }
 template<char const* name, typename T>
@@ -264,8 +267,11 @@ void registerClassDeserialize() {
 }
 
 #define RegisterSerializeClass(type) \
+private: \
+virtual const char* _getObjectName() const { return typeName; } \
+public: \
 static constexpr char typeName[] = #type; \
-static inline StaticInit<registerClassDeserialize<typeName, type>> init;
+static inline StaticInit<registerClassDeserialize<typeName, type>> init; \
 
 
 
@@ -290,9 +296,9 @@ template<typename T>
 	requires (!std::is_pointer<T>::value || !std::derived_from<std::remove_pointer_t<T>, SerializableObject>)
 class DeserializeBuffer<T> {
 private:
-	StackAlloc<T> _buffer;
+	StackAllocBuffer<T> _buffer;
 public:
-	inline StackAlloc<T>& buffer() { return _buffer; }
+	inline StackAllocBuffer<T>& buffer() { return _buffer; }
 	T&& operator*() {
 		return  *_buffer;
 	}

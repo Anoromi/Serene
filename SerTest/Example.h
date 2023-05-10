@@ -44,6 +44,7 @@ Deserialize read(BufferAlloc& v) {
 
 
 class Person : public SerializableObject {
+	RegisterSerializeClass(Person);
 private:
 	std::string _name;
 	unsigned int _age;
@@ -59,7 +60,6 @@ public:
 
 	Writer serializeCurrent() const;
 	static Deserialize read(BufferAlloc& buffer);
-	RegisterSerializeClass(Person);
 
 	void show(std::ostream&);
 
@@ -75,6 +75,7 @@ inline std::ostream& operator<<(std::ostream& o, Person& p) {
 }
 
 class Student : public Person {
+	RegisterSerializeClass(Student);
 private:
 	std::vector<std::string> _languages;
 
@@ -93,7 +94,6 @@ public:
 	static Deserialize read(BufferAlloc& buffer);
 	void show(std::ostream&);
 
-	RegisterSerializeClass(Student);
 };
 
 
@@ -104,12 +104,13 @@ inline std::ostream& operator<<(std::ostream& o, Student& p) {
 
 
 class Color : public SerializableObject {
+	RegisterSerializeClass(Color);
 private:
 	char _red;
 	char _green;
 	char _blue;
 	Writer _serialize() const override { return serilaizeCurrent(); }
-	
+
 public:
 	Color(char red, char green, char blue) : _red(red), _green(green), _blue(blue) {}
 	static Deserialize read(BufferAlloc& buffer);

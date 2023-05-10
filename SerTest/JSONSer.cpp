@@ -1,4 +1,5 @@
 #include "JSONSer.h"
+#include <boost/json.hpp>
 
 
 void JSONMapSer::_begin()
@@ -40,7 +41,7 @@ void JSONSer::_sULong(unsigned long long v)
 
 void JSONSer::_sString(const std::string& v)
 {
-	_out << "\"" << v << "\"";
+	_out << boost::json::serialize(boost::json::string(v));
 }
 
 void JSONSer::_sBool(bool v)

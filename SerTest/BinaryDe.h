@@ -1,11 +1,11 @@
 #pragma once
 #include "Deserializer.h"
 #include <fstream>
+#include "types.h"
 
-using IStream = std::ifstream;
 class BinaryDe final : public AbstractDeserializer {
 private:
-	IStream& _in;
+	InStream& _in;
 	virtual long long _dLong() override;
 	virtual unsigned long long _dULong() override;
 	virtual std::string _dString() override;
@@ -16,12 +16,12 @@ private:
 	virtual std::unique_ptr<AbstractStructDe> _dStruct() override;
 
 public:
-	BinaryDe(IStream& in) : _in(in) {}
+	BinaryDe(InStream& in) : _in(in) {}
 };
 
 class BinaryMapDe final : public AbstractMapDe {
 private:
-	IStream& _in;
+	InStream& _in;
 	BinaryDe& _de;
 	size_t _size = 0;
 	virtual bool _hasMore() override;
@@ -30,13 +30,13 @@ private:
 	virtual void _begin() override;
 	virtual void _end() override;
 public:
-	BinaryMapDe(IStream& in, BinaryDe& de) : _in(in), _de(de) {}
+	BinaryMapDe(InStream& in, BinaryDe& de) : _in(in), _de(de) {}
 };
 
 
 class BinarySeqDe final : public AbstractSeqDe {
 private:
-	IStream& _in;
+	InStream& _in;
 	BinaryDe& _de;
 	size_t _size = 0;
 	virtual bool _hasMore() override;
@@ -44,7 +44,7 @@ private:
 	virtual void _begin() override;
 	virtual void _end() override;
 public:
-	BinarySeqDe(IStream& in, BinaryDe& de) : _in(in), _de(de) {}
+	BinarySeqDe(InStream& in, BinaryDe& de) : _in(in), _de(de) {}
 };
 
 class BinaryStructDe final : public AbstractStructDe {

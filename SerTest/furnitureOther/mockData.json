@@ -1,0 +1,62 @@
+[
+  {
+    "type": "Table",
+    "value": {
+      "name": "Eames Lounge Chair",
+      "material": "wood"
+    }
+  },
+  {
+    "type": "Table",
+    "value": {
+      "name": "Annie",
+      "material": "plastic"
+    }
+  },
+  {
+    "type": "Table",
+    "value": {
+      "name": "Eames Lounge Chair",
+      "material": "wood"
+    }
+  },
+  {
+    "type": "Chair",
+    "value": {
+      "name": "The Sitwell",
+      "frameMaterial": "wood",
+      "outerMaterial": {
+        "hasValue": true,
+        "value": "cotton"
+      },
+      "reclining": true
+    }
+  },
+  {
+    "type": "Chair",
+    "value": {
+      "name": "The Zenon",
+      "frameMaterial": "wood",
+      "outerMaterial": {
+        "hasValue": false
+      },
+      "reclining": false
+    }
+  },
+  {
+    "type": "Bed",
+    "value": {
+      "name": "Malm",
+      "peopleCount": 2,
+      "includesMattress": true
+    }
+  },
+  {
+    "type": "Bed",
+    "value": {
+      "name": "Brimnes",
+      "peopleCount": 1,
+      "includesMattress": false
+    }
+  }
+]

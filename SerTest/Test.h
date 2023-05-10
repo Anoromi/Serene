@@ -57,7 +57,7 @@ inline void serTest(std::string path, const T& value) {
 
 void serTest1() {
 
-	Person p("Andrii Zahorulko", 19, Sex::male);
+	Person p("Andrii Zahorulko", 400, Sex::male);
 	serTest("./out1", p);
 
 	Student s("Andrii Zahorulko", 19, Sex::male, { "dart", "c#", "rust" });

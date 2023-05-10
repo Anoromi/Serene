@@ -11,7 +11,7 @@ public:
 };
 
 template<typename T>
-class StackAlloc : public BufferAlloc {
+class StackAllocBuffer : public BufferAlloc {
 private:
 	char _buffer[sizeof(T)];
 	bool _wasInitialized = false;
@@ -21,7 +21,7 @@ private:
 	}
 
 public:
-	virtual ~StackAlloc() {
+	virtual ~StackAllocBuffer() {
 		if (_wasInitialized)
 			reinterpret_cast<T*>(_buffer)->~T();
 	};
@@ -37,7 +37,7 @@ public:
 	void setWasInitialized(bool wasInitialized) { _wasInitialized = wasInitialized; }
 };
 
-class HeapAlloc : public BufferAlloc {
+class HeapAllocBuffer : public BufferAlloc {
 private:
 	char* _buffer;
 
@@ -45,5 +45,5 @@ private:
 		return _buffer;
 	}
 public:
-	HeapAlloc(size_t bufferSize) : _buffer(new char[bufferSize]) {}
+	HeapAllocBuffer(size_t bufferSize) : _buffer(new char[bufferSize]) {}
 };

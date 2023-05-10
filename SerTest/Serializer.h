@@ -6,6 +6,7 @@
 #include <iterator>
 #include <map>
 #include <functional>
+#include <optional>
 
 class AbstractSerializer;
 class AbstractMapSer;
@@ -128,17 +129,40 @@ inline Writer write(std::same_as<char> auto v) {
 	return [v](AbstractSerializer& s) {s.sChar(v); };
 }
 
-template<typename T>
-concept HasClassName = requires(T t) {
-	{T::typeName} -> std::convertible_to<const char(&)[]>;
+
+//template<typename T>
+//concept HasClassName = requires(T t) {
+//	{T::typeName} -> std::convertible_to<const char(&)[]>;
+//};
+
+class SerializableObject {
+private:
+	virtual Writer _serialize() const = 0;
+	virtual const char* _getObjectName() const = 0;
+public:
+	inline Writer serialize() const { return _serialize(); }
+	inline const char* getObjectName() const { return _getObjectName(); }
 };
 
-template<HasClassName T>
+template<typename T>
+requires std::derived_from<T, SerializableObject>
 inline Writer write(const T* v) {
 	return [v](AbstractSerializer& s) {
 		auto structSer = s.sStruct();
 		structSer->begin();
-		structSer->sKeyVal("type", write<std::string>(T::typeName));
+		structSer->sKeyVal("type", write<std::string>(v->getObjectName()));
+		structSer->sKeyVal("value", write<T>(*v));
+		structSer->finish();
+	};
+}
+
+
+template<typename T>
+requires (!std::derived_from<T, SerializableObject>)
+inline Writer write(const T* v) {
+	return [v](AbstractSerializer& s) {
+		auto structSer = s.sStruct();
+		structSer->begin();
 		structSer->sKeyVal("value", write<T>(*v));
 		structSer->finish();
 	};
@@ -146,12 +170,7 @@ inline Writer write(const T* v) {
 
 
 
-class SerializableObject {
-private:
-	virtual Writer _serialize() const = 0;
-public:
-	inline Writer serialize() const { return _serialize(); }
-};
+
 
 template<typename T>
 concept SerializableIterator = requires(T t) {

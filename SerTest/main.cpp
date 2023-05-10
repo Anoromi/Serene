@@ -6,12 +6,13 @@
 #include "Deserializer.h"
 #include "Example.h"
 #include "Test.h"
+#include "httpExample.h"
 
 
 using namespace std;
 
 
 int main() {
-	serTest1();
-
+	//serTest1();
+	runHttpExample();
 }

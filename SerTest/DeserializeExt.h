@@ -2,17 +2,6 @@
 #include "Deserializer.h"
 #include <list>
 
-//template<Deserializable D>
-//class SeqIterator {
-//private:
-//	AbstractSeqDe& _item;
-//
-//public:
-//};
-
-
-
-
 template<typename T>
 concept PushDeserialize = requires(T t, const typename T::value_type & g) {
 	Deserializable<typename T::value_type>;
@@ -20,10 +9,9 @@ concept PushDeserialize = requires(T t, const typename T::value_type & g) {
 };
 
 template<PushDeserialize T>
-	requires (!std::same_as<std::string, T>)
+	requires (!std::same_as<std::string, T>) && (!std::derived_from<T, SerializableObject>)
 Deserialize read(BufferAlloc& buffer) {
 	return [&buffer](AbstractDeserializer& de, DeserialzationScope& scope) {
-		//read<T>(buffer);
 		auto seq = new (buffer.getBuffer()) T();
 		auto seqDe = de.dSeq();
 		seqDe->begin();
@@ -38,14 +26,41 @@ Deserialize read(BufferAlloc& buffer) {
 }
 
 
+template<typename V>
+	requires std::same_as<std::optional<typename V::value_type>, V>
+Deserialize read(BufferAlloc& buffer) {
+	return [&buffer](AbstractDeserializer& de, DeserialzationScope& scope) {
+		DeserializeBuffer<bool> hasValue;
+		auto st = de.dStruct();
+		st->next(scope, "hasValue", deserialize(hasValue.buffer()));
+		if (*hasValue) {
+			DeserializeBuffer<typename V::value_type> value;
+			st->next(scope, "value", deserialize(value.buffer()));
+			new (buffer.getBuffer()) V(*value);
+		}
+		else {
+			new (buffer.getBuffer()) V();
+		}
+	};
+}
 
-inline void hello() {
 
-	std::list<int> v;
+template<typename T>
+	requires std::same_as<T, std::unique_ptr<typename T::element_type>>
+Deserialize read(BufferAlloc& v) {
+	return [&v](AbstractDeserializer& de, DeserialzationScope& scope) {
+		DeserializeBuffer<typename T::element_type*> value;
+		deserialize(value.buffer())(de, scope);
+		new (v.getBuffer()) T(*value);
+	};
+}
 
-
-	DeserializeBuffer<std::list<std::string>> hehe;
-	deserialize(hehe.buffer());
-	//std::list<int>::value_type
-		//v.end();
+template<typename T>
+	requires std::same_as<T, std::shared_ptr<typename T::element_type>>
+Deserialize read(BufferAlloc& v) {
+	return [&v](AbstractDeserializer& de, DeserialzationScope& scope) {
+		DeserializeBuffer<typename T::element_type*> value;
+		deserialize(value.buffer())(de, scope);
+		new (v.getBuffer()) T(*value);
+	};
 }

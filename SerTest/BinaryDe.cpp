@@ -2,27 +2,29 @@
 
 long long BinaryDe::_dLong()
 {
-	long long v = 0;
+	//long long v = 0;
 
-	for (size_t i = 0; i < 8; i++)
-	{
-		char next;
-		_in >> next;
-		v = (v + next) << 8;
-	}
-	return v;
+	//for (size_t i = 0; i < 8; i++)
+	//{
+	//	char next;
+	//	_in >> next;
+	//	v = (v + next) << 8;
+	//}
+	return (long long)_dULong();
 }
 
 unsigned long long BinaryDe::_dULong()
 {
 	unsigned long long v = 0;
-
-	for (size_t i = 0; i < 8; i++)
-	{
-		char next;
+	char next;
+	_in >> next;
+	int currentPos = 0;
+	while ((next & 0x80) == 0) {
+		v |= ((unsigned long long)(next) << currentPos);
+		currentPos += 7;
 		_in >> next;
-		v = (v << 8) + next;
 	}
+	v |= ((unsigned long long)(next & 0x7F) << currentPos);
 	return v;
 }
 
